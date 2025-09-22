@@ -3,7 +3,7 @@ version: '3.9'
 services:
 
   db:
-    image: postgres
+    image: postgres:15-alpine
     restart: always
     shm_size: 128mb
     environment:
@@ -11,9 +11,14 @@ services:
       POSTGRES_DB: grocery_list
       POSTGRES_USER: admin
     ports:
-      - "5433:5432"
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d grocery_list"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
 
   api:
     build:
@@ -21,7 +26,7 @@ services:
       dockerfile: Dockerfile
     restart: always
     ports:
-      - "5000:5000"
+      - "5001:5000"
     environment:
       - DATABASE_URL=postgresql://admin:password1@db:5432/grocery_list
       - JWT_SECRET=your-super-secret-jwt-key-change-in-production-make-it-long-and-random-at-least-32-characters
@@ -31,10 +36,12 @@ services:
       - GROCERY_PAGE_SIZE=10
       - PORT=5000
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     volumes:
       - ./api:/app
       - /app/node_modules
+    command: sh -c "yarn prisma migrate deploy && yarn prisma db seed && yarn start:dev"
 
   adminer:
     image: adminer

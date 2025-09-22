@@ -1,12 +1,14 @@
-import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
 import { GroceryService } from './grocery.service'
 import { FilterGroceryDto } from './dto/filter.dto'
 import { CreateGroceryDto, GroceryItemIdDto, UpdateGroceryDto } from './dto/grocery.dto'
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard'
 
 @Controller({
   version: '1',
   path: 'grocery',
 })
+@UseGuards(JwtAuthGuard)
 export class GroceryController {
   constructor(private readonly groceryService: GroceryService) {}
 
@@ -37,7 +39,21 @@ export class GroceryController {
     }
   }
 
-  /**
-   * @todo add delete and maybe bulk delete for grocery items
-   */
+  @Delete(':id')
+  async deleteGrocery(@Param() { id }: GroceryItemIdDto) {
+    await this.groceryService.deleteGrocery(id)
+
+    return {
+      message: 'Grocery item deleted successfully',
+    }
+  }
+  @Get(':id')
+  async getGroceryItem(@Param() { id }: GroceryItemIdDto) {
+    const data = await this.groceryService.getGroceryItemById(id)
+
+    return {
+      data,
+    }
+  }
+
 }

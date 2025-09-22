@@ -6,6 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
@@ -21,7 +22,7 @@ enum GroceryItemStatus {
 model User {
   id       String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   email    String @unique
-  password String?
+  password String
 
   createdAt DateTime  @default(now()) @db.Timestamptz()
   updatedAt DateTime  @updatedAt @db.Timestamptz()
@@ -35,4 +36,17 @@ model GroceryItem {
   status   GroceryItemStatus @default(RANOUT)
   createdAt DateTime  @default(now()) @db.Timestamptz()
   updatedAt DateTime  @updatedAt @db.Timestamptz()
+  
+  statusHistory GroceryItemStatusHistory[]
+
+}
+
+model GroceryItemStatusHistory {
+  id            String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  groceryItemId String @db.Uuid
+  oldStatus     GroceryItemStatus?
+  newStatus     GroceryItemStatus
+  changedAt     DateTime @default(now()) @db.Timestamptz()
+
+  groceryItem GroceryItem @relation(fields: [groceryItemId], references: [id], onDelete: Cascade)
 }

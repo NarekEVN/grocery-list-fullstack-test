@@ -35,6 +35,16 @@ describe('GroceryController (e2e)', () => {
 
     prisma = app.get(PrismaService)
     await prisma.$connect()
+
+    await prisma.user.upsert({
+      where: { id: '7f21c221-363c-41b0-9b11-319d9c12dc34' },
+      update: {},
+      create: {
+        id: '7f21c221-363c-41b0-9b11-319d9c12dc36',
+        email: 'test@example.com',
+        password: 'testpassword',
+      },
+    })
   })
 
   afterAll(async () => {
@@ -46,6 +56,9 @@ describe('GroceryController (e2e)', () => {
         where: { id: { in: fixtureIds } },
       })
     }
+    await prisma.user.deleteMany({
+      where: { id: 'test-user-id-12345' },
+    })
     await app.close()
   })
 

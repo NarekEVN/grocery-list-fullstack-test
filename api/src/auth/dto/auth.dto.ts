@@ -1,4 +1,4 @@
-import { IsEmail, IsString, MinLength, MaxLength, Matches } from 'class-validator'
+import { IsEmail, IsString, MinLength, MaxLength, Matches, IsNotEmpty } from 'class-validator'
 import { Expose } from 'class-transformer'
 
 export class RegisterDto {
@@ -20,16 +20,16 @@ export class LoginDto {
   email: string
 
   @IsString()
-  @MinLength(1, { message: 'Password is required' })
+  @IsNotEmpty()
   password: string
 }
 
 export class AuthResponseDto {
   @Expose()
-  access_token: string
+  accessToken: string
 
   @Expose()
-  refresh_token: string
+  refreshToken: string
 
   @Expose()
   user: {

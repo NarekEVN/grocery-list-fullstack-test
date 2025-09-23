@@ -76,16 +76,16 @@ export class AuthService {
   }
 
   private generateTokens(payload: JwtPayload) {
-    const access_token = this.jwtService.sign(payload, {
+    const accessToken = this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET,
-      expiresIn: '15m',
+      expiresIn: process.env.JWT_EXPIRES_IN,
     })
 
-    const refresh_token = this.jwtService.sign(payload, {
+    const refreshToken = this.jwtService.sign(payload, {
       secret: process.env.JWT_REFRESH_SECRET,
-      expiresIn: '1h',
+      expiresIn: process.env.JWT_REFRESH_EXPIRES_IN,
     })
 
-    return { access_token, refresh_token }
+    return { accessToken, refreshToken }
   }
 }

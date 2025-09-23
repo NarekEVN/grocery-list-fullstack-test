@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common'
 import { GroceryService } from './grocery.service'
 import { FilterGroceryDto } from './dto/filter.dto'
 import { CreateGroceryDto, GroceryItemIdDto, UpdateGroceryDto } from './dto/grocery.dto'
@@ -13,8 +13,9 @@ export class GroceryController {
   constructor(private readonly groceryService: GroceryService) {}
 
   @Get()
-  async filterGroceries(@Query() filter: FilterGroceryDto) {
-    const data = await this.groceryService.filterGroceries(filter)
+  async filterGroceries(@Query() filter: FilterGroceryDto, @Req() req) {
+    const userId = req.user.id
+    const data = await this.groceryService.filterGroceries(filter, userId)
 
     return {
       data,
@@ -22,8 +23,9 @@ export class GroceryController {
   }
 
   @Post()
-  async createGrocery(@Body() createGroceryDto: CreateGroceryDto) {
-    const data = await this.groceryService.createGrocery(createGroceryDto)
+  async createGrocery(@Body() createGroceryDto: CreateGroceryDto, @Req() req) {
+    const userId = req.user.id
+    const data = await this.groceryService.createGrocery({ ...createGroceryDto }, userId)
 
     return {
       data,
@@ -55,5 +57,4 @@ export class GroceryController {
       data,
     }
   }
-
 }

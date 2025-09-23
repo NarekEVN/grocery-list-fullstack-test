@@ -26,6 +26,8 @@ model User {
 
   createdAt DateTime  @default(now()) @db.Timestamptz()
   updatedAt DateTime  @updatedAt @db.Timestamptz()
+  
+  groceryItems GroceryItem[]
 }
 
 model GroceryItem {
@@ -34,9 +36,11 @@ model GroceryItem {
   quantity Int?   @default(0)
   priority Int?   @default(5)
   status   GroceryItemStatus @default(RANOUT)
+  userId   String @db.Uuid
   createdAt DateTime  @default(now()) @db.Timestamptz()
   updatedAt DateTime  @updatedAt @db.Timestamptz()
   
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   statusHistory GroceryItemStatusHistory[]
 
 }

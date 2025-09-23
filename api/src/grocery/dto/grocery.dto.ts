@@ -9,12 +9,12 @@ export class CreateGroceryDto {
   name: string
 
   @IsNumber()
-  @Transform(({ value }) => (value ? Number(value) : undefined))
+  @Transform(({ value }) => Number(value))
   @IsOptional()
   priority?: number
 
   @IsNumber()
-  @Transform(({ value }) => (value ? Number(value) : undefined))
+  @Transform(({ value }) => Number(value))
   @IsOptional()
   quantity?: number
 

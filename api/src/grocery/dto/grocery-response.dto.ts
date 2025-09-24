@@ -7,6 +7,7 @@ export class GroceryItemResponseDto {
   status: GroceryItemStatus
   createdAt: Date
   updatedAt: Date
+  lastUpdatedStatus?: string
 }
 
 export class GroceryItemWithHistoryResponseDto extends GroceryItemResponseDto {
@@ -18,7 +19,7 @@ export class StatusHistoryResponseDto {
   groceryItemId: string
   oldStatus: GroceryItemStatus | null
   newStatus: GroceryItemStatus
-  changedAt: Date
+  changedAt: string
 }
 
 export class GroceryListResponseDto {

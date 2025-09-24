@@ -3,7 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { FilterGroceryDto } from './dto/filter.dto'
 import { CreateGroceryDto, UpdateGroceryDto } from './dto/grocery.dto'
-import { GroceryItemResponseDto } from './dto/grocery-response.dto'
+import { GroceryItemResponseDto, StatusHistoryResponseDto } from './dto/grocery-response.dto'
 
 @Injectable()
 export class GroceryService {
@@ -22,12 +22,24 @@ export class GroceryService {
     }
     const groceries = await this.prisma.groceryItem.findMany({
       where,
+      include: {
+        statusHistory: true,
+      },
       orderBy: [{ priority: 'asc' }, { name: 'asc' }],
       skip: (page - 1) * pageSize,
       take: pageSize,
     })
 
-    return groceries
+    return groceries.map(grocery => {
+      const lastUpdatedStatus = grocery.statusHistory[grocery.statusHistory.length - 1]?.changedAt.toISOString() || null;
+
+      const { statusHistory, ...items } = grocery
+
+      return {
+        ...items,
+        lastUpdatedStatus,
+      }
+    })
   }
 
   async createGrocery(createGroceryDto: CreateGroceryDto, userId: string): Promise<GroceryItemResponseDto> {
@@ -83,5 +95,21 @@ export class GroceryService {
     }
 
     return groceryItem
+  }
+
+  async getGroceryItemHistory(id: string): Promise<StatusHistoryResponseDto[]> {
+    const history = await this.prisma.groceryItemStatusHistory.findMany({
+      where: { groceryItemId: id },
+      orderBy: { changedAt: 'desc' },
+    })
+    const data = history.map(item => ({
+      id: item.id,
+      groceryItemId: item.groceryItemId,
+      oldStatus: item.oldStatus,
+      newStatus: item.newStatus,
+      changedAt: item.changedAt.toISOString(),
+    }))
+
+    return data
   }
 }

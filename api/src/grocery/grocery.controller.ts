@@ -41,6 +41,15 @@ export class GroceryController {
     }
   }
 
+  @Get(':id/history')
+  async getGroceryItemHistory(@Param() { id }: GroceryItemIdDto) {
+    const data = await this.groceryService.getGroceryItemHistory(id)
+
+    return {
+      data,
+    }
+  }
+
   @Delete(':id')
   async deleteGrocery(@Param() { id }: GroceryItemIdDto) {
     await this.groceryService.deleteGrocery(id)

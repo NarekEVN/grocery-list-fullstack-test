@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { TextField, Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem } from '@mui/material'
 
@@ -13,9 +13,16 @@ const GroceryForm: FC<{ openForm: boolean; setOpenForm: (openForm: boolean) => v
   const { mutateAsync: createGroceryItem } = useCreateGrocery()
   const { enqueueSnackbar } = useSnackbar()
 
+  useEffect(() => {
+    reset({
+      name: '',
+      quantity: 0,
+      priority: 1,
+    })
+  }, [openForm, reset])
+
   const handleFormClose = () => {
     setOpenForm(false)
-    reset()
   }
 
   const onSubmit = async (data: GroceryFormItem) => {

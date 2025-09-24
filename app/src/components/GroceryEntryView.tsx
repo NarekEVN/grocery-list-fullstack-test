@@ -22,7 +22,6 @@ import { ArrowBack, CheckCircle, Delete, RemoveShoppingCart } from '@mui/icons-m
 import { queryClient } from '@utils/client'
 import { useDeleteGrocery, useGrocery, useGroceryHistory, useUpdateGrocery } from 'hooks/useGrocery'
 import { useNavigate } from 'react-router-dom'
-import Logout from './Logout'
 import { useSnackbar } from 'notistack'
 
 const GroceryEntryView: FC<{ id: string; onDeleted?: () => void }> = ({ id, onDeleted }) => {
@@ -74,12 +73,9 @@ const GroceryEntryView: FC<{ id: string; onDeleted?: () => void }> = ({ id, onDe
         }
         title={item.name}
         action={
-          <Stack direction="row">
-            <IconButton aria-label="delete" onClick={() => setAsk(true)} disabled={deleting}>
-              <Delete />
-            </IconButton>
-            <Logout />
-          </Stack>
+          <IconButton aria-label="delete" onClick={() => setAsk(true)} disabled={deleting}>
+            <Delete />
+          </IconButton>
         }
       />
       <CardContent>

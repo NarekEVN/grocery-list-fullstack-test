@@ -1,7 +1,6 @@
 version: '3.9'
 
 services:
-
   db:
     image: postgres:15-alpine
     restart: always
@@ -19,6 +18,8 @@ services:
       interval: 2s
       timeout: 2s
       retries: 30
+    networks:
+      - app-network
 
   api:
     build:
@@ -26,7 +27,7 @@ services:
       dockerfile: Dockerfile
     restart: always
     ports:
-      - "5001:5000"
+      - "5002:5000"
     environment:
       - DATABASE_URL=postgresql://admin:password1@db:5432/grocery_list
       - JWT_SECRET=your-super-secret-jwt-key-change-in-production-make-it-long-and-random-at-least-32-characters
@@ -42,12 +43,32 @@ services:
       - ./api:/app
       - /app/node_modules
     command: sh -c "yarn prisma migrate deploy && yarn prisma db seed && yarn start:dev"
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+    networks:
+      - app-network
 
   adminer:
     image: adminer
     restart: always
     ports:
-      - 8080:8080
+      - "8080:8080"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
   postgres_data:

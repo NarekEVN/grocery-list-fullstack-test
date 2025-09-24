@@ -1,4 +1,4 @@
-import { Save, Edit, Add, Logout } from '@mui/icons-material'
+import { Save, Edit, Add } from '@mui/icons-material'
 import { Card, CardContent, CardHeader, IconButton } from '@mui/material'
 import { useState } from 'react'
 import GroceryForm from './GroceryForm'
@@ -20,7 +20,6 @@ export function GroceryHome() {
             <IconButton onClick={handleFormOpen}>
               <Add />
             </IconButton>
-            <Logout />
           </>
         }
       />

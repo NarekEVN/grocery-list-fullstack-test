@@ -22,6 +22,7 @@ import {
 } from '@mui/material'
 import { Delete } from '@mui/icons-material'
 import { Link as RouterLink } from 'react-router-dom'
+import Logout from './Logout'
 
 import { useGroceryList, useDeleteGrocery, useUpdateGrocery } from 'hooks/useGrocery'
 import { useSnackbar } from 'notistack'
@@ -88,7 +89,7 @@ const GroceryList: FC<{ isEditing?: boolean }> = ({ isEditing }) => {
 
   return (
     <TableContainer component={Paper}>
-      <Stack direction="row" justifyContent="flex-end" sx={{ p: 1 }}>
+      <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2} sx={{ p: 1 }}>
         <Select
           size="small"
           value={statusFilter}
@@ -98,6 +99,7 @@ const GroceryList: FC<{ isEditing?: boolean }> = ({ isEditing }) => {
           <MenuItem value="RANOUT">Ran out</MenuItem>
           <MenuItem value="HAVE">Have</MenuItem>
         </Select>
+        <Logout />
       </Stack>
       <Table>
         <TableHead>

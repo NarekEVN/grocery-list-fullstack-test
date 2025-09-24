@@ -1,8 +1,9 @@
 import { FC } from 'react'
 import { useForm, Controller } from 'react-hook-form'
-import { TextField, Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material'
+import { TextField, Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem } from '@mui/material'
 
 import { useCreateGrocery } from 'hooks/useGrocery'
+import { useSnackbar } from 'notistack'
 
 const GroceryForm: FC<{ openForm: boolean; setOpenForm: (openForm: boolean) => void }> = ({
   openForm,
@@ -10,6 +11,7 @@ const GroceryForm: FC<{ openForm: boolean; setOpenForm: (openForm: boolean) => v
 }) => {
   const { handleSubmit, control, reset } = useForm<GroceryFormItem>()
   const { mutateAsync: createGroceryItem } = useCreateGrocery()
+  const { enqueueSnackbar } = useSnackbar()
 
   const handleFormClose = () => {
     setOpenForm(false)
@@ -17,9 +19,14 @@ const GroceryForm: FC<{ openForm: boolean; setOpenForm: (openForm: boolean) => v
   }
 
   const onSubmit = async (data: GroceryFormItem) => {
-    await createGroceryItem(data)
-    setOpenForm(false)
-    reset()
+    try {
+      await createGroceryItem(data)
+      enqueueSnackbar('Item created successfully', { variant: 'success' })
+      setOpenForm(false)
+      reset()
+    } catch {
+      enqueueSnackbar('Failed to create item', { variant: 'error' })
+    }
   }
 
   return (
@@ -38,6 +45,28 @@ const GroceryForm: FC<{ openForm: boolean; setOpenForm: (openForm: boolean) => v
             control={control}
             defaultValue={0}
             render={({ field }) => <TextField {...field} margin="dense" label="Quantity" fullWidth />}
+          />
+          <Controller
+            name="priority"
+            control={control}
+            defaultValue={1 as 1 | 2 | 3 | 4 | 5}
+            rules={{ required: true }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                select
+                margin="dense"
+                label="Priority"
+                fullWidth
+                onChange={e => field.onChange(Number(e.target.value) as 1 | 2 | 3 | 4 | 5)}
+              >
+                {[1, 2, 3, 4, 5].map(p => (
+                  <MenuItem key={p} value={p}>
+                    {p}
+                  </MenuItem>
+                ))}
+              </TextField>
+            )}
           />
           <DialogActions>
             <Button onMouseDown={handleFormClose}>Cancel</Button>

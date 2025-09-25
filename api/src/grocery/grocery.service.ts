@@ -10,7 +10,7 @@ export class GroceryService {
   constructor(private readonly prisma: PrismaService) {}
 
   async filterGroceries(filter: FilterGroceryDto, userId: string): Promise<GroceryItemResponseDto[]> {
-    const PAGE_SIZE = Number(process.env.GROCERY_PAGE_SIZE) || 10
+    const PAGE_SIZE = 10
 
     const page = filter.page || 1
     const pageSize = filter.pageSize || PAGE_SIZE

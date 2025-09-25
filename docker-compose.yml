@@ -6,15 +6,15 @@ services:
     restart: always
     shm_size: 128mb
     environment:
-      POSTGRES_PASSWORD: password1
-      POSTGRES_DB: grocery_list
-      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U admin -d grocery_list"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       interval: 2s
       timeout: 2s
       retries: 30
@@ -29,12 +29,11 @@ services:
     ports:
       - "5002:5000"
     environment:
-      - DATABASE_URL=postgresql://admin:password1@db:5432/grocery_list
-      - JWT_SECRET=your-super-secret-jwt-key-change-in-production-make-it-long-and-random-at-least-32-characters
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
+      - JWT_SECRET=${JWT_SECRET}
       - JWT_EXPIRES_IN=15m
-      - JWT_REFRESH_SECRET=your-super-secret-refresh-key-change-in-production
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
       - JWT_REFRESH_EXPIRES_IN=2h
-      - GROCERY_PAGE_SIZE=10
       - PORT=5000
     depends_on:
       db:
